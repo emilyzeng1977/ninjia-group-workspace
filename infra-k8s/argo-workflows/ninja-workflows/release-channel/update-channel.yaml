@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: update-channel
+spec:
+  entrypoint: whalesay
+  arguments:
+    parameters:
+      - name: IMAGE_ID
+        value: "id"
+      - name: CHANNEL_NAME
+        value: "stage"
+
+  templates:
+    - name: whalesay
+      inputs:
+        parameters:
+          - name: IMAGE_ID
+            value: "{{workflow.arguments.parameters.IMAGE_ID}}"
+          - name: CHANNEL_NAME
+            value: "{{workflow.arguments.parameters.CHANNEL_NAME}}"
+      container:
+        image: docker/whalesay:latest
+        command: [cowsay]
+        args: ["update-channel", "{{inputs.parameters.IMAGE_ID}}", "{{inputs.parameters.CHANNEL_NAME}}"]

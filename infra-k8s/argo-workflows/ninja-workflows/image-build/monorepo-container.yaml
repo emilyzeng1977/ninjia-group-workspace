@@ -1,0 +1,125 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: build-monorepo-container
+spec:
+  serviceAccountName: argo
+  entrypoint: imagebuild
+  arguments:
+    parameters:
+    - name: BRANCH_NAME
+      value: "develop"
+    - name: CHANNEL_NAME
+      value: "stage"
+  volumeClaimTemplates:
+    - metadata:
+        name: workdir
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+
+  templates:
+  - name: imagebuild
+    inputs:
+      parameters:
+      - name: BRANCH_NAME
+        value: "{{workflow.arguments.parameters.BRANCH_NAME}}"
+      - name: CHANNEL_NAME
+        value: "{{workflow.arguments.parameters.CHANNEL_NAME}}"
+    dag:
+      tasks:
+      - name: checkout
+        template: checkout
+        arguments:
+          parameters:
+          - name: BRANCH_NAME
+            value: "{{inputs.parameters.BRANCH_NAME}}"
+      - name: build
+        template: build
+        arguments:
+          parameters:
+            - name: BRANCH_NAME
+              value: "{{inputs.parameters.BRANCH_NAME}}"
+        depends: checkout.Succeeded
+      - name: update-image
+        template: update-image
+        depends: build.Succeeded
+      - name: call-update-channel-wf
+        template: call-update-channel-wf
+        arguments:
+          parameters:
+            - name: IMAGE_ID
+              value: "{{tasks.update-image.outputs.parameters.IMAGE_ID}}"
+            - name: CHANNEL_NAME
+              value: "{{inputs.parameters.CHANNEL_NAME}}"
+        depends: update-image.Succeeded
+
+  - name: checkout
+    timeout: "30m"
+    inputs:
+      parameters:
+      - name: BRANCH_NAME
+    script:
+      image: alpine/git:latest
+      command: ["/bin/sh", "-ex"]
+      source: |
+        mkdir /workspace/{{inputs.parameters.BRANCH_NAME}}
+        echo "This this the demo content for go!" >"/workspace/{{inputs.parameters.BRANCH_NAME}}/hello_world.go"
+      volumeMounts:
+      - name: workdir
+        mountPath: /workspace
+
+  - name: build
+    timeout: "30m"
+    inputs:
+      parameters:
+        - name: BRANCH_NAME
+    script:
+      image: alpine/git:latest
+      command: ["/bin/sh", "-ex"]
+      source: |
+        ls -alt /workspace/{{inputs.parameters.BRANCH_NAME}}/
+      volumeMounts:
+        - name: workdir
+          mountPath: /workspace
+
+  - name: update-image
+    timeout: "30m"
+    outputs:
+      parameters:
+        - name: IMAGE_ID
+          valueFrom:
+            path: "/workspace/image_id"
+    script:
+      image: alpine/git:latest
+      command: [ "/bin/sh", "-ex" ]
+      source: |
+        echo "image-$(date '+%Y-%m-%d')" >"/workspace/image_id"
+      volumeMounts:
+        - name: workdir
+          mountPath: /workspace
+
+  - name: call-update-channel-wf
+    timeout: "30m"
+    inputs:
+      parameters:
+        - name: IMAGE_ID
+        - name: CHANNEL_NAME
+    resource:
+      action: create
+      manifest: |
+        apiVersion: argoproj.io/v1alpha1
+        kind: Workflow
+        metadata:
+          generateName: call-update-channel-
+        spec:
+          workflowTemplateRef:
+            name: update-channel
+          arguments:
+            parameters:
+            - name: CHANNEL_NAME
+              value: {{inputs.parameters.CHANNEL_NAME}}
+            - name: IMAGE_ID
+              value: {{inputs.parameters.IMAGE_ID}}
