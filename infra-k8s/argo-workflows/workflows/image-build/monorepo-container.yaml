@@ -10,7 +10,7 @@ spec:
     - name: PROJECT_NAME
       value: "nijia-group-workspace"
     - name: BRANCH_NAME
-      value: "develop"
+      value: "02-k8s-create-push-image"
     - name: CHANNEL_NAME
       value: "stage"
   volumeClaimTemplates:
