@@ -76,8 +76,8 @@ spec:
         PROJECT_NAME="{{inputs.parameters.PROJECT_NAME}}"
         BRANCH_NAME="{{inputs.parameters.BRANCH_NAME}}"
         echo ${BRANCH_NAME}
-        git clone --branch ${BRANCH_NAME} "https://github.com/emilyzeng1977/${PROJECT_NAME}.git" "/workspace/${PROJECT_NAME}"
-        ls -alt /workspace/${PROJECT_NAME}
+        git clone --branch ${BRANCH_NAME} "https://github.com/emilyzeng1977/${PROJECT_NAME}.git" "/workspace"
+        ls -alt /workspace
       volumeMounts:
       - name: workdir
         mountPath: /workspace
