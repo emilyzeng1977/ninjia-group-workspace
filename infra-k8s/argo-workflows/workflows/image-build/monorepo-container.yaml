@@ -95,21 +95,32 @@ spec:
         - name: workdir
           mountPath: /workspace
 
-  - name: update-image
+  - name: create-push-image
     timeout: "30m"
     outputs:
       parameters:
         - name: IMAGE_ID
           valueFrom:
             path: "/workspace/image_id"
-    script:
-      image: alpine/git:latest
-      command: [ "/bin/sh", "-ex" ]
-      source: |
-        echo "image-$(date '+%Y-%m-%d')" >"/workspace/image_id"
+    container:
+      resources:
+        requests:
+          cpu: "2000m"
+      image: gcr.io/kaniko-project/executor:debug
       volumeMounts:
-        - name: workdir
-          mountPath: /workspace
+        - name: work
+          mountPath: /work
+        - name: jenkins-docker-cfg
+          mountPath: /root
+      workingDir: /work/{{inputs.parameters.path}}
+      env:
+        - name: AWS_ACCESS_KEY_ID
+          value: envvalue
+        - name: AWS_SECRET_ACCESS_KEY
+          value: envvalue
+      args:
+        - --destination=435514637872.dkr.ecr.ap-southeast-2.amazonaws.com/{{inputs.parameters.container}}:{{inputs.parameters.BUILDTAG}}
+        - --context=/workspace/{{inputs.parameters.container}}/
 
   - name: call-update-channel-wf
     timeout: "30m"
