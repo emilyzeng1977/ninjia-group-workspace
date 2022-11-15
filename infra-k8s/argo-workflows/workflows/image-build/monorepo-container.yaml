@@ -90,12 +90,13 @@ spec:
       image: alpine/git:latest
       command: ["/bin/sh", "-ex"]
       source: |
-        ls -alt /workspace/{{inputs.parameters.BRANCH_NAME}}/
+        echo "build"
+#        ls -alt /workspace/{{inputs.parameters.BRANCH_NAME}}/
       volumeMounts:
         - name: workdir
           mountPath: /workspace
 
-  - name: create-push-image
+  - name: update-image
     timeout: "30m"
     outputs:
       parameters:
@@ -107,20 +108,17 @@ spec:
         requests:
           cpu: "2000m"
       image: gcr.io/kaniko-project/executor:debug
-      volumeMounts:
-        - name: work
-          mountPath: /work
-        - name: jenkins-docker-cfg
-          mountPath: /root
-      workingDir: /work/{{inputs.parameters.path}}
       env:
         - name: AWS_ACCESS_KEY_ID
-          value: envvalue
+          value: AKIASTL6GZUTID6S2APB
         - name: AWS_SECRET_ACCESS_KEY
-          value: envvalue
+          value: YHSWsEuluFjwhoMYL4NQT+X+AcE7S49TSm2avEA4
       args:
-        - --destination=435514637872.dkr.ecr.ap-southeast-2.amazonaws.com/{{inputs.parameters.container}}:{{inputs.parameters.BUILDTAG}}
-        - --context=/workspace/{{inputs.parameters.container}}/
+        - --destination=179042700582.dkr.ecr.ap-southeast-2.amazonaws.com/app:latest
+        - --context=/workspace/app/
+      volumeMounts:
+        - name: workdir
+          mountPath: /workspace
 
   - name: call-update-channel-wf
     timeout: "30m"
