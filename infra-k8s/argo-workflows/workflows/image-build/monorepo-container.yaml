@@ -92,6 +92,8 @@ spec:
       command: ["/bin/sh", "-ex"]
       source: |
         echo "build"
+        ls /workspace
+        ls /workspace/app
 #        ls -alt /workspace/{{inputs.parameters.BRANCH_NAME}}/
       volumeMounts:
         - name: workdir
