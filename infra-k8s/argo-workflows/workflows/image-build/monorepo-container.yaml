@@ -8,7 +8,7 @@ spec:
   arguments:
     parameters:
     - name: PROJECT_NAME
-      value: "nijia-group-workspace"
+      value: "ninjia-group-workspace"
     - name: BRANCH_NAME
       value: "02-k8s-create-push-image"
     - name: CHANNEL_NAME
