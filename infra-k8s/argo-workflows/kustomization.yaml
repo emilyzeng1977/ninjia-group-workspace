@@ -4,4 +4,4 @@ kind: Kustomization
 bases:
   - install
   - permissions
-  - ninja-workflows
+  - workflows
