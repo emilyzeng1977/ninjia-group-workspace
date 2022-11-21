@@ -7,6 +7,8 @@ spec:
   entrypoint: imagebuild
   arguments:
     parameters:
+    - name: PROJECT_NAME
+      value: "ninjia-group-workspace"
     - name: BRANCH_NAME
       value: "develop"
     - name: CHANNEL_NAME
@@ -61,12 +63,13 @@ spec:
     inputs:
       parameters:
       - name: BRANCH_NAME
+      - name: PROJECT_NAME
     script:
       image: alpine/git:latest
       command: ["/bin/sh", "-ex"]
       source: |
         mkdir /workspace/{{inputs.parameters.BRANCH_NAME}}
-        echo "This this the demo content for go!" >"/workspace/{{inputs.parameters.BRANCH_NAME}}/hello_world.go"
+        git clone --depth=1 --single-branch --branch ${BRANCH_NAME} "https://github.com/emilyzeng1977/${PROJECT_NAME}.git" "/workspace/${PROJECT_NAME}"
       volumeMounts:
       - name: workdir
         mountPath: /workspace
