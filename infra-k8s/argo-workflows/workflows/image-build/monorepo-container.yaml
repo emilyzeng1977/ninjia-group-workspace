@@ -26,6 +26,8 @@ spec:
   - name: imagebuild
     inputs:
       parameters:
+      - name: PROJECT_NAME
+        value: "{{workflow.arguments.parameters.PROJECT_NAME}}"
       - name: BRANCH_NAME
         value: "{{workflow.arguments.parameters.BRANCH_NAME}}"
       - name: CHANNEL_NAME
