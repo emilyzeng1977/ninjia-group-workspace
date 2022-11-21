@@ -68,8 +68,8 @@ spec:
       image: alpine/git:latest
       command: ["/bin/sh", "-ex"]
       source: |
-        mkdir /workspace/{{inputs.parameters.BRANCH_NAME}}
-        git clone --depth=1 --single-branch --branch ${BRANCH_NAME} "https://github.com/emilyzeng1977/${PROJECT_NAME}.git" "/workspace/${PROJECT_NAME}"
+        mkdir /workspace/{{inputs.parameters.PROJECT_NAME}}
+        git clone --depth=1 --single-branch --branch {{inputs.parameters.BRANCH_NAME}} "https://github.com/emilyzeng1977/{{inputs.parameters.PROJECT_NAME}}.git" "/workspace/{{inputs.parameters.PROJECT_NAME}}"
       volumeMounts:
       - name: workdir
         mountPath: /workspace
