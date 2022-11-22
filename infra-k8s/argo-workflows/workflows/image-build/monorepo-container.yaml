@@ -112,10 +112,6 @@ spec:
             path: "/workspace/image_id"
     container:
       image: gcr.io/kaniko-project/executor:v1.9.0-debug
-      command:
-        - ls /workspace/{{inputs.parameters.PROJECT_NAME}}/app
-        - echo "image-$(date '+%Y-%m-%d')" >"/workspace/image_id"
-        - /kaniko/executor
       args:
         - --context=/workspace/{{inputs.parameters.PROJECT_NAME}}/app
         - --destination=192.168.0.115:5001/app:2
