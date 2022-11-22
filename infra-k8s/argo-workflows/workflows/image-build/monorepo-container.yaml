@@ -38,12 +38,16 @@ spec:
         template: checkout
         arguments:
           parameters:
+          - name: PROJECT_NAME
+            value: "{{inputs.parameters.PROJECT_NAME}}"
           - name: BRANCH_NAME
             value: "{{inputs.parameters.BRANCH_NAME}}"
       - name: build
         template: build
         arguments:
           parameters:
+            - name: PROJECT_NAME
+              value: "{{inputs.parameters.PROJECT_NAME}}"
             - name: BRANCH_NAME
               value: "{{inputs.parameters.BRANCH_NAME}}"
         depends: checkout.Succeeded
@@ -81,11 +85,12 @@ spec:
     inputs:
       parameters:
         - name: BRANCH_NAME
+        - name: PROJECT_NAME
     script:
       image: alpine/git:latest
       command: ["/bin/sh", "-ex"]
       source: |
-        ls -alt /workspace/{{inputs.parameters.BRANCH_NAME}}/
+        ls -alt /workspace/{{inputs.parameters.PROJECT_NAME}}/
       volumeMounts:
         - name: workdir
           mountPath: /workspace

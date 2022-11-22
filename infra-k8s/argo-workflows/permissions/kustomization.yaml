@@ -8,12 +8,12 @@ namespace: argo
 resources:
   - rolebinding.yaml
 
-secretGenerator:
-  - name: aws-ecr-secret
-    namespace: argo
-    files:
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
-      - AWS_DEFAULT_REGION
+#secretGenerator:
+#  - name: aws-ecr-secret
+#    namespace: argo
+#    files:
+#      - AWS_ACCESS_KEY_ID
+#      - AWS_SECRET_ACCESS_KEY
+#      - AWS_DEFAULT_REGION
 
 
