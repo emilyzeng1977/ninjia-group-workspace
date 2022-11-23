@@ -109,7 +109,7 @@ spec:
       parameters:
         - name: IMAGE_ID
           valueFrom:
-            path: "/workspace/image_id"
+            path: "/workspace/{{inputs.parameters.PROJECT_NAME}}/image_id"
     container:
       image: gcr.io/kaniko-project/executor:v1.9.0-debug
       args:
