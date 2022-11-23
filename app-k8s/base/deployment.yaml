@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ninjia
+spec:
+  selector:
+    matchLabels:
+      run: ninjia
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: ninjia
+    spec:
+      containers:
+        - name: ninjia
+          image: nginx
+          ports:
+            - containerPort: 80
