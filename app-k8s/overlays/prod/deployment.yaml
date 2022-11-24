@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       run: ninjia
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: ninjia
-          image: 192.168.0.115:5001/app:latest
+          image: 192.168.0.115:5001/app:1
           ports:
             - containerPort: 80
