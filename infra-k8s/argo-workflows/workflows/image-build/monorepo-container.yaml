@@ -10,7 +10,7 @@ spec:
     - name: PROJECT_NAME
       value: "ninjia-group-workspace"
     - name: BRANCH_NAME
-      value: "develop"
+      value: "build-push-image"
     - name: CHANNEL_NAME
       value: "stage"
   volumeClaimTemplates:
@@ -53,13 +53,19 @@ spec:
         depends: checkout.Succeeded
       - name: update-image
         template: update-image
+        arguments:
+          parameters:
+            - name: PROJECT_NAME
+              value: "{{inputs.parameters.PROJECT_NAME}}"
+            - name: IMAGE_ID
+              value: "{{tasks.build.outputs.parameters.IMAGE_ID}}"
         depends: build.Succeeded
       - name: call-update-channel-wf
         template: call-update-channel-wf
         arguments:
           parameters:
             - name: IMAGE_ID
-              value: "{{tasks.update-image.outputs.parameters.IMAGE_ID}}"
+              value: "{{tasks.build.outputs.parameters.IMAGE_ID}}"
             - name: CHANNEL_NAME
               value: "{{inputs.parameters.CHANNEL_NAME}}"
         depends: update-image.Succeeded
@@ -86,17 +92,6 @@ spec:
       parameters:
         - name: BRANCH_NAME
         - name: PROJECT_NAME
-    script:
-      image: alpine/git:latest
-      command: ["/bin/sh", "-ex"]
-      source: |
-        ls -alt /workspace/{{inputs.parameters.PROJECT_NAME}}/
-      volumeMounts:
-        - name: workdir
-          mountPath: /workspace
-
-  - name: update-image
-    timeout: "30m"
     outputs:
       parameters:
         - name: IMAGE_ID
@@ -104,9 +99,27 @@ spec:
             path: "/workspace/image_id"
     script:
       image: alpine/git:latest
-      command: [ "/bin/sh", "-ex" ]
+      command: ["/bin/sh", "-ex"]
       source: |
-        echo "image-$(date '+%Y-%m-%d')" >"/workspace/image_id"
+        ls -alt /workspace/{{inputs.parameters.PROJECT_NAME}}/
+        date "+%y%m%d%H%M%S" > /workspace/image_id
+      volumeMounts:
+        - name: workdir
+          mountPath: /workspace
+
+  - name: update-image
+    timeout: "30m"
+    inputs:
+      parameters:
+        - name: PROJECT_NAME
+        - name: IMAGE_ID
+    container:
+      image: gcr.io/kaniko-project/executor:v1.9.0-debug
+      args:
+        - --context=/workspace/{{inputs.parameters.PROJECT_NAME}}/app
+        - --destination=192.168.0.115:5001/app:{{inputs.parameters.IMAGE_ID}}
+        - --dockerfile=/workspace/{{inputs.parameters.PROJECT_NAME}}/app/Dockerfile
+          
       volumeMounts:
         - name: workdir
           mountPath: /workspace
