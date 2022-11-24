@@ -46,7 +46,6 @@ spec:
         template: build
         arguments:
           parameters:
-            -
             - name: PROJECT_NAME
               value: "{{inputs.parameters.PROJECT_NAME}}"
             - name: BRANCH_NAME
@@ -58,13 +57,15 @@ spec:
           parameters:
             - name: PROJECT_NAME
               value: "{{inputs.parameters.PROJECT_NAME}}"
+            - name: IMAGE_ID
+              value: "{{tasks.build.outputs.parameters.IMAGE_ID}}"
         depends: build.Succeeded
       - name: call-update-channel-wf
         template: call-update-channel-wf
         arguments:
           parameters:
             - name: IMAGE_ID
-              value: "{{tasks.update-image.outputs.parameters.IMAGE_ID}}"
+              value: "{{tasks.build.outputs.parameters.IMAGE_ID}}"
             - name: CHANNEL_NAME
               value: "{{inputs.parameters.CHANNEL_NAME}}"
         depends: update-image.Succeeded
@@ -91,11 +92,17 @@ spec:
       parameters:
         - name: BRANCH_NAME
         - name: PROJECT_NAME
+    outputs:
+      parameters:
+        - name: IMAGE_ID
+          valueFrom:
+            path: "/workspace/image_id"
     script:
       image: alpine/git:latest
       command: ["/bin/sh", "-ex"]
       source: |
         ls -alt /workspace/{{inputs.parameters.PROJECT_NAME}}/
+        date "+%y%m%d%H%M%S" > /workspace/image_id
       volumeMounts:
         - name: workdir
           mountPath: /workspace
@@ -105,16 +112,12 @@ spec:
     inputs:
       parameters:
         - name: PROJECT_NAME
-    outputs:
-      parameters:
         - name: IMAGE_ID
-          valueFrom:
-            path: "/workspace/{{inputs.parameters.PROJECT_NAME}}/image_id"
     container:
       image: gcr.io/kaniko-project/executor:v1.9.0-debug
       args:
         - --context=/workspace/{{inputs.parameters.PROJECT_NAME}}/app
-        - --destination=192.168.0.115:5001/app:2
+        - --destination=192.168.0.115:5001/app:{{inputs.parameters.IMAGE_ID}}
         - --dockerfile=/workspace/{{inputs.parameters.PROJECT_NAME}}/app/Dockerfile
           
       volumeMounts:
