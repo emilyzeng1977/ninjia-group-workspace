@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: ninjia
-          image: 192.168.0.115:5001/app:20221127
+          image: 192.168.0.115:5001/app:221129230723
           ports:
             - containerPort: 80

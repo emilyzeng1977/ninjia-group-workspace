@@ -35,6 +35,7 @@ spec:
           cat ninjia-group-workspace/app-k8s/overlays/dev/deployment.yaml | sed -ie 's/app:.*/'app:{{inputs.parameters.IMAGE_ID}}'/g' ninjia-group-workspace/app-k8s/overlays/dev/deployment.yaml
           cd ninjia-group-workspace
           git add infra-k8s/argo-workflows/workflows/release-channel/update-channel.yaml
-          git add app-k8s/overlays/dev/deployment.yaml
+          git add app-k8s/overlays/{{inputs.parameters.CHANNEL_NAME}}/deployment.yaml
+          echo "hello hello"
           git commit -a -m "update channel by editing the image id"
-          git push 
+          git push https://emilyzeng1977/ninjia-group-workspace.git --force
