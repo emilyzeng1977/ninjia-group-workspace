@@ -9,7 +9,7 @@ resources:
   - rolebinding.yaml
 
 secretGenerator:
-  - name: aws-ecr-secret
+  - name: aws-ecr-secret-test
     namespace: argo
     files:
       - AWS_ACCESS_KEY_ID

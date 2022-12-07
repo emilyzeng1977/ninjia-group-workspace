@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: secret-demo
+spec:
+  entrypoint: secret-demo
+
+  templates:
+    - name: secret-demo
+      script:
+        image: alpine/git:latest
+        command: ["/bin/sh", "-ex"]
+        source: |
+          env
+        env:
+        - name: AWS_ACCESS_KEY_ID  # name of env var
+          valueFrom:
+            secretKeyRef:
+              name: aws-ecr-secret-test     # name of an existing k8s secret
+              key: AWS_ACCESS_KEY_ID     # 'key' subcomponent of the secret
