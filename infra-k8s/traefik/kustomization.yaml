@@ -3,4 +3,4 @@ kind: Kustomization
 
 bases:
   - install
-  - demo
+  - traefik-demo
