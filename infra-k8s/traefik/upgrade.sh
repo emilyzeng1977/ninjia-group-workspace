@@ -4,5 +4,5 @@ kubectl apply -k .
 
 sleep 3
 
-kubectl port-forward service/traefik-dashboard-service 8080:8080
+kubectl -n traefik port-forward service/traefik-web-service 8081:80
 
