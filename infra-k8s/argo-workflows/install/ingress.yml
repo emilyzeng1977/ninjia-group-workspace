@@ -1,15 +1,15 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: whoami-ingress
+  name: argo-workflow-ingress
 spec:
   rules:
   - http:
       paths:
-      - path: /demo
+      - path: /argo-workflow
         pathType: Prefix
         backend:
           service:
-            name: whoami
+            name: argo-server
             port:
               name: web

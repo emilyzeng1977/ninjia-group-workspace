@@ -6,3 +6,4 @@ namespace: argo
 resources:
   - namespace.yaml
   - install.yaml
+  - ingress.yml
