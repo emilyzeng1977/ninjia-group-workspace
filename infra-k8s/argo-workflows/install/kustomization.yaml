@@ -6,3 +6,6 @@ namespace: argo
 resources:
   - namespace.yaml
   - install.yaml
+
+patchesStrategicMerge:
+  - set-http.yaml
