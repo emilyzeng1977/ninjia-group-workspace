@@ -1,0 +1,10 @@
+version: '3.6'
+
+services:
+  gitlab-runner-container:
+    image: gitlab/gitlab-runner:latest
+    container_name: gitlab-runner-container
+    restart: always
+    volumes:
+      - /Users/tomniu/Study/docker/gitlab-runner/config/:/etc/gitlab-runner/
+      - /var/run/docker.sock:/var/run/docker.sock
