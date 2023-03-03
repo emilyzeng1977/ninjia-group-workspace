@@ -39,5 +39,7 @@ spec:
           git add infra-k8s/argo-workflows/workflows/release-channel/update-channel.yaml
           git add app-k8s/overlays/{{inputs.parameters.CHANNEL_NAME}}/deployment.yaml
           echo "hello hello"
+          git config --global user.email "emily@gmail.com"
+          git config --global user.name "zeng"
           git commit -a -m "update channel by editing the image id"
           git push https://emilyzeng1977/ninjia-group-workspace.git --force
