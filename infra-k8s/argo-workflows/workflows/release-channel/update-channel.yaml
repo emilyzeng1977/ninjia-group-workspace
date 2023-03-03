@@ -41,4 +41,4 @@ spec:
           git config --global user.email "emily@gmail.com"
           git config --global user.name "zeng"
           git commit -a -m "update channel by editing the image id"
-          git push https://emilyzeng1977/ninjia-group-workspace.git --force
+          git push https://github.com/emilyzeng1977/ninjia-group-workspace.git --force
