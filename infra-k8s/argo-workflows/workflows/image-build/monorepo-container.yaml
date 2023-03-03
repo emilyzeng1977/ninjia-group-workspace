@@ -21,6 +21,10 @@ spec:
         resources:
           requests:
             storage: 1Gi
+  volumes:
+    - name: my-secret-vol
+      secret:
+        secretName: dockerhub     # name of an existing k8s secret
 
   templates:
   - name: imagebuild
@@ -84,9 +88,13 @@ spec:
       source: |
         mkdir /workspace/{{inputs.parameters.PROJECT_NAME}}
         git clone --depth=1 --single-branch --branch {{inputs.parameters.BRANCH_NAME}} "https://github.com/emilyzeng1977/{{inputs.parameters.PROJECT_NAME}}.git" "/workspace/{{inputs.parameters.PROJECT_NAME}}"
+        ls /secret/mountpath
+        cat /secret/mountpath/config.json
       volumeMounts:
       - name: workdir
         mountPath: /workspace
+      - name: my-secret-vol     # mount file containing secret at /secret/mountpath
+        mountPath: "/secret/mountpath"
 
   - name: build
     timeout: "30m"
@@ -119,11 +127,17 @@ spec:
       image: gcr.io/kaniko-project/executor:v1.9.0-debug
       args:
         - --context=/workspace/{{inputs.parameters.PROJECT_NAME}}/app
-        - --destination=192.168.0.115:5001/app:{{inputs.parameters.IMAGE_ID}}
+        - --destination=zengemily79/nginx:{{inputs.parameters.IMAGE_ID}}
         - --dockerfile=/workspace/{{inputs.parameters.PROJECT_NAME}}/app/Dockerfile
       volumeMounts:
         - name: workdir
           mountPath: /workspace
+        - name: my-secret-vol
+          mountPath: /kaniko/.docker/
+    volumes:
+      - name: my-secret-vol
+        secret:
+          secretName: dockerhub     # name of an existing k8s secret
 
   - name: call-update-channel-wf
     timeout: "30m"
