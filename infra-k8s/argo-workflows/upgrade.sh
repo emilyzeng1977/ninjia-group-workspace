@@ -1,6 +1,5 @@
 #!/bin/bash -ex
 # kubectl kustomize .
-lsof -ti:2746 | xargs kill -9
 echo -n ${AWS_ACCESS_KEY_ID_VAL} > ./permissions/AWS_ACCESS_KEY_ID
 echo -n ${AWS_SECRET_ACCESS_KEY_VAL} > ./permissions/AWS_SECRET_ACCESS_KEY
 echo -n ${AWS_DEFAULT_REGION_VAL} > ./permissions/AWS_DEFAULT_REGION

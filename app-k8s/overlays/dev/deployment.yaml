@@ -1,19 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ninjia
+  name: app
+  namespace: ninjia
 spec:
-  selector:
-    matchLabels:
-      run: ninjia
   replicas: 1
   template:
-    metadata:
-      labels:
-        run: ninjia
     spec:
+      $patch: replace
       containers:
-        - name: ninjia
-          image: app:latest
+        - name: mini-nginx
+          image: zengemily79/mini-nginx:1
           ports:
             - containerPort: 8080
