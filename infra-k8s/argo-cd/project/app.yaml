@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app
+  namespace: argocd
+spec:
+  destination:
+    namespace: k8s-app
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/emilyzeng1977/ninjia-group-workspace.git
+    targetRevision: main
+    path: ./app-k8s/overlays/dev
+    directory:
+      recurse: true
+
