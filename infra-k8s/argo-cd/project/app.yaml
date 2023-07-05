@@ -5,13 +5,13 @@ metadata:
   namespace: argocd
 spec:
   destination:
-    namespace: k8s-app
+    namespace: ninjia
     server: https://kubernetes.default.svc
   project: default
   source:
     repoURL: https://github.com/emilyzeng1977/ninjia-group-workspace.git
     targetRevision: main
     path: ./app-k8s/overlays/dev
-    directory:
-      recurse: true
+  syncPolicy:
+    automated: {}
 
