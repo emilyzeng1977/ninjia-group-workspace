@@ -8,3 +8,5 @@
 kubectl apply -k .
 sleep 5
 kubectl port-forward svc/argocd-server -n argocd 8088:443
+# obtain pwd for admin
+# kubectl get pod -n argocd |grep argocd-server
