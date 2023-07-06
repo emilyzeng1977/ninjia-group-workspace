@@ -14,3 +14,6 @@ kubectl exec -i -t praqma/network-multitool -- nslookup <service-name>.<namespac
 # Ingress
 https://kubernetes.io/zh-cn/docs/tasks/access-application-cluster/ingress-minikube/
 
+minikube addons enable ingress
+kubectl get pods -n ingress-nginx
+
